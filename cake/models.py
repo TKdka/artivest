@@ -17,9 +17,11 @@ class StandardModel(models.Model):
         
 class Cake(StandardModel):
     
-    display_name = models.CharField(max_length = 255, null = True, blank = True)
-    toppings_string = models.CharField(max_length = 200)
+    display_name = models.CharField(max_length = 255, unique = True)
+    candies = models.CharField(max_length = 200)
     max_slices = models.IntegerField()
+    number_minions = models.PositiveIntegerField()
+    is_valid_cake = models.BooleanField()
     
     class Meta:
         managed = True 

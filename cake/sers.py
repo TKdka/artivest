@@ -15,11 +15,13 @@ class CakeSerializer(ModelSerializer):
     #but required in the model.  Hence, the extra kwargs
     
     def create(self, validated_data):
+        import pdb 
+        pdb.set_trace()
         max_slices = EqualSequenceSlicer().get_max_slices(validated_data['candies'])
         num_minions = validated_data['number_minions']   
              
         validated_data['max_slices'] = max_slices
-        validated_data['is_valid_cake'] = num_minions >= max_slices
+        validated_data['is_valid_cake'] = num_minions <= max_slices
         return ModelSerializer.create(self, validated_data)
 
     class Meta:

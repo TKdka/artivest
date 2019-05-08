@@ -38,10 +38,27 @@ class TestCake(TestCase):
         
         new_cake = Cake.objects.get(display_name = display_name)
         self.assertEqual(new_cake.candies, toppings_string)
-        self.assertEqual(new_cake.max_slices, 2)
-        self.assertEqual(new_cake.number_minions, 3)
+        self.assertEqual(new_cake.max_slices, 3)
+        self.assertEqual(new_cake.number_minions, 2)
         self.assertTrue(new_cake.is_valid_cake)
-#         
+    
+    def test_create_cake_not_valid_cake(self):
+        display_name ='test_create_cake_not_valid_cake'
+        toppings_string = 'ababab'
+        data = {'display_name': display_name, 
+                'candies': toppings_string,
+                'number_minions': 5}
+        client = APIClient()
+        response = client.post(self.CREATE_URL, data)
+        self.assertEqual(response.status_code, 201)
+        
+        new_cake = Cake.objects.get(display_name = display_name)
+        self.assertEqual(new_cake.candies, toppings_string)
+        self.assertEqual(new_cake.max_slices, 3)
+        self.assertEqual(new_cake.number_minions, 5)
+        self.assertFalse(new_cake.is_valid_cake)    
+          
+         
 #     def test_crete_cake_invalid_toppings(self):
 #         
-#     def test_create_cake_not_valid_cake(self):
+#     

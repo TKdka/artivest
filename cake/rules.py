@@ -4,16 +4,9 @@ Created on May 8, 2019
 @author: tom
 '''
 
-#lower case letters only
-
-#What constitutes valid order?
-#-We need to each of m minions a slice of cake with the same sequence of candies 
-#-It appears as if the problem statement allow us ot toss out extras slices 
-#-So the number of minions m must be <= max number of equal sequence slices
-# Now here's the tricky part:  ""abcabcabcabc" is ok.  but so is "bcabcabcabca"
-
 import re 
 
+from rest_framework.serializers import ValidationError
 
 class CandiesFormatVaildator():
     '''Checks if all the candies in the list are valid'''
@@ -29,7 +22,30 @@ class CandiesFormatVaildator():
             return False 
         else:
             return re.fullmatch('[a-z]+', candies) is not None 
+
+class CakeValidator():
     
+    def __init__(self):
+        pass 
+    
+    def is_valid(self, cake):
+        """ 
+        Parameters: 
+        cake (Cake or dictionary containing cake attributes): Cake or Cake-like dictionary
+      
+        Returns: 
+        bool: is the cake valid
+      
+        """
+        if isinstance(cake, dict):
+            number_minions = cake['number_minions']
+            max_slices = cake['max_slices']
+        else:
+            number_minions = cake.number_minions
+            max_slices = cake.max_slices
+        return number_minions <= max_slices
+  
+  
 class EqualSequenceSlicer():
     
     def __init__(self):
@@ -44,10 +60,11 @@ class EqualSequenceSlicer():
             int: the maximum number of slices with equivalent sequences of candies
 
         '''
+        
         if not candies:
-            raise Exception("The cake must have candies")
+            raise ValidationError("The cake must have candies")
         if not CandiesFormatVaildator().is_valid(candies):
-            raise Exception("The candies are not valid.")
+            raise ValidationError("The candies are not valid.")
  
         #Algorithm.  For each integer, i <= len(string), check if len if that string is divisible by the i
         #If it is, divide the sequence into i equal parts and check if each part is the same.

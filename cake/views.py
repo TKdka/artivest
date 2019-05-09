@@ -4,19 +4,21 @@ Created on May 8, 2019
 @author: tom
 '''
 
-from rest_framework.viewsets import ModelViewSet
 from rest_framework import permissions
-from django.shortcuts import get_object_or_404
+from rest_framework.viewsets import GenericViewSet
+from rest_framework import mixins
 
 from cake import models 
 from cake import sers
 
-
-
-class CakeViewSet(ModelViewSet):
+class CakeViewSet(mixins.CreateModelMixin,
+                   mixins.RetrieveModelMixin,
+                   mixins.UpdateModelMixin,
+                   mixins.DestroyModelMixin,
+                   mixins.ListModelMixin,
+                   GenericViewSet):
     
     lookup_field = 'display_name'
-
     queryset = models.Cake.objects.all()
     serializer_class = sers.CakeSerializer
     permission_classes = [permissions.AllowAny]

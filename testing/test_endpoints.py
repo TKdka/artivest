@@ -137,8 +137,17 @@ class TestCake(TestCase):
         response = client.patch(url, data)      
         self.assertEqual(response.status_code, 400)
         self.cake1.refresh_from_db()
-        self.assertEqual(self.cake1.max_slices, 3)        
-                
+        self.assertEqual(self.cake1.max_slices, 3)      
+        
+    def test_full_update_not_allowed(self):  
+        client = APIClient()
+        url = '{base}{display_name}/'.format(base=self.CAKE_URL, display_name=self.cake1.display_name)
+        data = {'number_minions': 120}
+
+        response = client.put(url, data)      
+        self.assertEqual(response.status_code, 400)
+        self.cake1.refresh_from_db()
+        self.assertEqual(self.cake1.number_minions, 2)                   
         
         
                 

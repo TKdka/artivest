@@ -13,9 +13,9 @@ from cake import sers
 
 class CakeViewSet(mixins.CreateModelMixin,
                    mixins.RetrieveModelMixin,
-                   mixins.UpdateModelMixin,
                    mixins.DestroyModelMixin,
                    mixins.ListModelMixin,
+                   mixins.UpdateModelMixin,
                    GenericViewSet):
     
     lookup_field = 'display_name'

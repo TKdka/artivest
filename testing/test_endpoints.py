@@ -104,8 +104,22 @@ class TestCake(TestCase):
         self.assertEqual(len(response.data), 2)
         cake_1_data = dict(list(filter(lambda x: x['id'] == self.cake1.id, response.data))[0])
         self.assertEqual(cake_1_data, expected_cake_1_data)
+
+    def test_partial_update_candies(self):
+        client = APIClient()
+        expected_data = {'id': 1, 'display_name': 'Cake1', 
+         'candies': 'abcdefg', 
+         'max_slices': 1, 
+         'number_minions': 2, 'is_valid_cake': False}  
+        #NB: we invalidated the cake because there are not enough slices
         
-    def test_partial_update_cakes(self):
+        url = '{base}{display_name}/'.format(base=self.CAKE_URL, display_name=self.cake1.display_name)
+        data = {'candies':'abcdefg'}
+        response = client.patch(url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(dict(response.data), expected_data) 
+       
+    def test_partial_update_number_minons(self):
         client = APIClient()
         expected_data = {'id': 1, 'display_name': 'Cake1', 
          'candies': 'abcabcabc', 
@@ -139,16 +153,11 @@ class TestCake(TestCase):
         self.cake1.refresh_from_db()
         self.assertEqual(self.cake1.max_slices, 3)      
         
-    def test_full_update_not_allowed(self):  
+    def test_delete(self):     
         client = APIClient()
         url = '{base}{display_name}/'.format(base=self.CAKE_URL, display_name=self.cake1.display_name)
-        data = {'number_minions': 120}
-
-        response = client.put(url, data)      
-        self.assertEqual(response.status_code, 400)
-        self.cake1.refresh_from_db()
-        self.assertEqual(self.cake1.number_minions, 2)                   
+        response = client.delete(url)
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(Cake.objects.filter(pk = self.cake1.pk).count(), 0)
         
         
-                
-#     
